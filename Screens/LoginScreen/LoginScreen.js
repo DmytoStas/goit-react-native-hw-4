@@ -8,6 +8,7 @@ import {
   View,
   Platform,
   Text,
+  Alert,
 } from "react-native";
 
 import {
@@ -23,14 +24,22 @@ import {
   regBtnText,
 } from "./LoginScreenStyle";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigation = useNavigation();
+
   const onLogin = () => {
     if (!email.trim() || !password.trim()) {
-      return console.warn("Fields are empty!");
+      return Alert.alert("Invalid input", "Fields are empty!", [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]);
     }
 
     const formValues = {
@@ -39,6 +48,8 @@ export const LoginScreen = () => {
     };
 
     console.log("formValues = ", formValues);
+
+    navigation.navigate("Home", { user: { email, password } });
 
     setEmail("");
     setPassword("");
@@ -96,7 +107,7 @@ export const LoginScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
               <Text style={regBtnText}>
                 {`Not registered yet? `}
                 <Text style={{ textDecorationLine: "underline" }}>Sign up</Text>

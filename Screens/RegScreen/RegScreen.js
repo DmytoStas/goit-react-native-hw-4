@@ -9,13 +9,13 @@ import {
   View,
   Platform,
   Text,
+  Alert,
 } from "react-native";
 
 import {
   container,
   backgroundImage,
   regContainer,
-  authContainer,
   avatarContainer,
   avatar,
   addAvatarBtn,
@@ -30,15 +30,23 @@ import {
 
 import { AntDesign } from "@expo/vector-icons";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export const RegScreen = () => {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigation = useNavigation();
+
   const onReg = () => {
     if (!login.trim() || !email.trim() || !password.trim()) {
-      return console.warn("Fields are empty!");
+      return Alert.alert("Invalid input", "Fields are empty!", [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]);
     }
 
     const formValues = {
@@ -48,6 +56,8 @@ export const RegScreen = () => {
     };
 
     console.log("formValues = ", formValues);
+
+    navigation.navigate("Home", { user: { login, email, password } });
 
     setLogin("");
     setEmail("");
@@ -122,7 +132,7 @@ export const RegScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Text style={regBtnText}>
                 {`Already registered? `}
                 <Text style={{ textDecorationLine: "underline" }}>Log in</Text>
