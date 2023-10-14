@@ -5,7 +5,7 @@ import { Feather, AntDesign } from "@expo/vector-icons";
 import { CreatePostScreen } from "../CreatePostScreen";
 import { PostScreen } from "../PostScreen/PostScreen";
 
-import { header, headerTitle, plusIcon } from "./HomeStyles";
+import { header, headerTitle, plusIcon, iconsTab } from "./HomeStyles";
 import { ProfileScreen } from "../ProfileScreen";
 
 const Tabs = createBottomTabNavigator();
@@ -14,10 +14,11 @@ export const Home = ({ navigation }) => {
   return (
     <Tabs.Navigator
       initialRouteName="Posts"
-      screenOptions={{
+      screenOptions={({ route }) => ({
+        tabBarShowLabel: false,
         headerTitleAlign: "center",
         headerStyle: header,
-        tabBarShowLabel: false,
+        headerTitleStyle: headerTitle,
         tabBarStyle: {
           justifyContent: "center",
           alignItems: "center",
@@ -25,13 +26,39 @@ export const Home = ({ navigation }) => {
           borderTopWidth: 1,
           borderTopColor: "#bdbdbd",
         },
-        headerTitleStyle: headerTitle,
-      }}
+        tabBarIcon: ({ focused }) => {
+          let iconName;
+
+          if (route.name === "Posts") {
+            iconName = "grid";
+          }
+          if (route.name === "CreatePost") {
+            iconName = "plus";
+          }
+          if (route.name === "Profile") {
+            iconName = "user";
+          }
+          return (
+            <View
+              style={{
+                ...iconsTab,
+                backgroundColor: focused ? "#FF6C00" : "#FFFFFF",
+              }}
+            >
+              <Feather
+                name={iconName}
+                size={24}
+                color={focused ? "#FFFFFF" : "#212121"}
+              />
+            </View>
+          );
+        },
+      })}
     >
       <Tabs.Screen
+        name="Posts"
+        component={PostScreen}
         options={{
-          tabBarIcon: () => <Feather name="grid" size={24} color="#212121cc" />,
-
           headerRight: () => (
             <TouchableOpacity
               onPress={() => navigation.navigate("Login")}
@@ -41,18 +68,12 @@ export const Home = ({ navigation }) => {
             </TouchableOpacity>
           ),
         }}
-        name="Posts"
-        component={PostScreen}
       />
 
       <Tabs.Screen
+        name="CreatePost"
+        component={CreatePostScreen}
         options={{
-          tabBarIcon: () => (
-            <View style={plusIcon}>
-              <Feather name="plus" size={24} color="#fff" />
-            </View>
-          ),
-
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => navigation.navigate("Posts")}
@@ -63,17 +84,14 @@ export const Home = ({ navigation }) => {
           ),
           tabBarStyle: { display: "none" },
         }}
-        name="Create post"
-        component={CreatePostScreen}
       />
 
       <Tabs.Screen
-        options={{
-          tabBarIcon: () => <Feather name="user" size={24} color="#212121CC" />,
-          headerShown: false,
-        }}
         name="Profile"
         component={ProfileScreen}
+        options={{
+          headerShown: false,
+        }}
       />
     </Tabs.Navigator>
   );
